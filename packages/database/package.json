@@ -1,0 +1,14 @@
+{
+  "name": "@openflocon/database",
+  "version": "0.1.0",
+  "description": "Flocon plugin for React Native: browse and query the SQLite databases of the app from the Flocon desktop app, and see the queries it runs.",
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "react-native": "src/index.ts",
+  "files": ["build", "src", "!**/__tests__"],
+  "license": "MIT",
+  "repository": "https://github.com/openflocon/flocon-react-native",
+  "peerDependencies": {
+    "@openflocon/react-native": "*"
+  }
+}

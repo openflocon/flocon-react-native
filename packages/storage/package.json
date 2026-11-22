@@ -1,0 +1,14 @@
+{
+  "name": "@openflocon/storage",
+  "version": "0.1.0",
+  "description": "Flocon plugin for React Native: browse and edit the key/value stores of the app (AsyncStorage...) from the Flocon desktop app.",
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "react-native": "src/index.ts",
+  "files": ["build", "src", "!**/__tests__"],
+  "license": "MIT",
+  "repository": "https://github.com/openflocon/flocon-react-native",
+  "peerDependencies": {
+    "@openflocon/react-native": "*"
+  }
+}

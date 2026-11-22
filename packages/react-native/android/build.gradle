@@ -1,0 +1,22 @@
+plugins {
+  id 'com.android.library'
+  id 'expo-module-gradle-plugin'
+}
+
+group = 'io.github.openflocon.reactnative'
+version = '0.1.0'
+
+android {
+  namespace "io.github.openflocon.reactnative"
+  defaultConfig {
+    versionCode 1
+    versionName "0.1.0"
+  }
+}
+
+dependencies {
+  implementation 'com.facebook.react:react-android'
+  // Only the debug implementation connects to the desktop: release builds get a stub, without OkHttp nor the
+  // certificate handling of Flocon.
+  debugImplementation 'com.squareup.okhttp3:okhttp:4.12.0'
+}

@@ -1,0 +1,41 @@
+{
+  "expo": {
+    "name": "Flocon Sample",
+    "slug": "flocon-sample",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "io.github.openflocon.sample"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#E6F4FE",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false,
+      "package": "io.github.openflocon.sample"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "scheme": "flocondemo",
+    "plugins": [
+      "@openflocon/react-native",
+      "expo-sqlite",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "The sample scans the QR code of Flocon Desktop to connect to it.",
+          "recordAudioAndroid": false,
+          "microphonePermission": false
+        }
+      ]
+    ],
+    "backgroundColor": "#111111"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "name": "@openflocon/react-native",
+  "version": "0.1.0",
+  "description": "Flocon SDK for React Native: shows the network calls, databases, preferences, files, analytics and more of your app in the Flocon desktop app.",
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "react-native": "src/index.ts",
+  "files": ["build", "src", "android", "ios", "app.plugin.js", "expo-module.config.json", "!**/__tests__"],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json"
+  },
+  "license": "MIT",
+  "repository": "https://github.com/openflocon/flocon-react-native",
+  "keywords": ["react-native", "expo", "flocon", "debugger", "network-inspector"],
+  "peerDependencies": {
+    "expo": "*",
+    "react": "*",
+    "react-native": "*"
+  }
+}

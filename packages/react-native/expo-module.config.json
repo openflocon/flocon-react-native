@@ -1,0 +1,5 @@
+{
+  "platforms": ["apple", "android"],
+  "apple": { "modules": ["FloconNativeModule"] },
+  "android": { "modules": ["io.github.openflocon.reactnative.FloconNativeModule"] }
+}

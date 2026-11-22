@@ -1,0 +1,24 @@
+{
+  "name": "flocon-react-native-workspace",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "sample"
+  ],
+  "scripts": {
+    "test": "jest",
+    "typecheck": "tsc -p tsconfig.json --noEmit && npm run typecheck --workspace sample",
+    "check": "tool/check.sh"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.28.0",
+    "@babel/preset-env": "^7.28.0",
+    "@babel/preset-typescript": "^7.27.0",
+    "@types/jest": "^30.0.0",
+    "@types/ws": "^8.18.1",
+    "babel-jest": "^30.0.0",
+    "jest": "^30.0.0",
+    "typescript": "~6.0.3",
+    "ws": "^8.18.3"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "@openflocon/qr-scanner",
+  "version": "0.1.0",
+  "description": "Flocon plugin for React Native: connect the app to the Flocon desktop app by scanning its QR code.",
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "react-native": "src/index.ts",
+  "files": ["build", "src", "!**/__tests__"],
+  "license": "MIT",
+  "repository": "https://github.com/openflocon/flocon-react-native",
+  "peerDependencies": {
+    "@openflocon/react-native": "*",
+    "expo-camera": "*",
+    "react": "*",
+    "react-native": "*"
+  }
+}

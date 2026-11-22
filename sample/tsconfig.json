@@ -1,0 +1,9 @@
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    "paths": {
+      "@openflocon/*": ["../packages/*/src/index.ts"]
+    }
+  }
+}
