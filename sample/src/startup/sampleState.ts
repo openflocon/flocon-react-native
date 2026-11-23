@@ -92,7 +92,17 @@ export const SampleStartup = {
           link: 'flocondemo://user/[userId]',
           label: 'User',
           description: 'Open the profile of a user',
-          parameters: [{ type: 'autoComplete', name: 'userId', suggestions: ['Florent', 'David', 'Marie'] }],
+          parameters: [
+            {
+              type: 'autoComplete',
+              name: 'userId',
+              suggestions: [
+                { value: 'Florent', label: 'Florent (admin)', isDefault: true },
+                { value: 'David', label: 'David (guest)' },
+                'Marie',
+              ],
+            },
+          ],
         },
         {
           link: 'flocondemo://post/[postId]?comment=[comment]',

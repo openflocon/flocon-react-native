@@ -12,7 +12,7 @@ import {
   FloconTextField,
 } from '../plugins/dashboard/dashboardElements';
 import { FloconDashboardPlugin } from '../plugins/dashboard/dashboardPlugin';
-import { FloconDeeplinksPlugin } from '../plugins/deeplinks/deeplinksPlugin';
+import { FloconDeeplinksPlugin, normalizeDeeplinkSuggestions } from '../plugins/deeplinks/deeplinksPlugin';
 import { FloconFeatureFlagsPlugin } from '../plugins/featureFlags/featureFlagsPlugin';
 import { FloconTablePlugin } from '../plugins/table/tablePlugin';
 import { FloconTimelinePlugin } from '../plugins/timeline/timelinePlugin';
@@ -127,6 +127,61 @@ test('deeplinks are sent in the desktop format, and again on connection', () => 
       { name: 'free', description: 'd' },
     ],
   });
+});
+
+test('deeplink suggestions can have a label and a default, next to the plain values', () => {
+  const sender = recordingSender();
+  new FloconDeeplinksPlugin(sender).register(
+    [
+      {
+        link: 'myapp://feed?tab=[tab]',
+        parameters: [
+          {
+            type: 'autoComplete',
+            name: 'tab',
+            suggestions: ['posts', { value: 'friends', label: 'Friends list', isDefault: true }],
+          },
+        ],
+      },
+    ],
+    [{ name: 'env', suggestions: [{ value: 'prod', label: 'Production' }, { value: 'staging', isDefault: true }] }],
+  );
+  expect(sender.bodies()[0]).toEqual({
+    deeplinks: [
+      {
+        link: 'myapp://feed?tab=[tab]',
+        parameters: [
+          {
+            type: 'auto_complete',
+            name: 'tab',
+            autoComplete: ['posts', 'friends'],
+            suggestions: [{ value: 'posts' }, { value: 'friends', label: 'Friends list', isDefault: true }],
+          },
+        ],
+      },
+    ],
+    variables: [
+      {
+        name: 'env',
+        mode: {
+          type: 'auto_complete',
+          suggestions: ['prod', 'staging'],
+          items: [{ value: 'prod', label: 'Production' }, { value: 'staging', isDefault: true }],
+        },
+      },
+    ],
+  });
+});
+
+test('only the first default suggestion stays and the last declaration of a value wins', () => {
+  const result = normalizeDeeplinkSuggestions([
+    { value: 'a', label: 'A', isDefault: true },
+    { value: 'b', isDefault: true },
+    { value: 'a', label: 'A bis' },
+  ]);
+  expect(result.map((s) => s.value)).toEqual(['b', 'a']);
+  expect(result.map((s) => s.isDefault)).toEqual([true, false]);
+  expect(result[1].label).toBe('A bis');
 });
 
 describe('dashboard', () => {

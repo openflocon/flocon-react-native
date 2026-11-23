@@ -1,10 +1,23 @@
 import type { FloconMessageSender, FloconPlugin } from '../../core/plugin';
 import { currentClient } from '../../core/registry';
 
+/** A value suggested for a deeplink parameter or variable, with a label shown instead of it and maybe pre-selected. */
+export interface FloconDeeplinkSuggestion {
+  /** What is inserted in the link when the suggestion is picked. */
+  readonly value: string;
+  /** What the desktop shows instead of `value`. */
+  readonly label?: string;
+  /** Pre-selected by the desktop while the field is empty. Only the first default of a list is kept. */
+  readonly isDefault?: boolean;
+}
+
+/** A plain value, or a suggestion with a label and maybe a default. */
+export type FloconDeeplinkSuggestionInput = string | FloconDeeplinkSuggestion;
+
 /** A part of a deeplink the desktop lets you fill in: written between brackets in the link, for example `[userId]`. */
 export type FloconDeeplinkParameter =
   /** A parameter with suggestions. */
-  | { readonly type: 'autoComplete'; readonly name: string; readonly suggestions: readonly string[] }
+  | { readonly type: 'autoComplete'; readonly name: string; readonly suggestions: readonly FloconDeeplinkSuggestionInput[] }
   /** A parameter shared by several deeplinks, edited once in the desktop (see `FloconDeeplinkVariable`). */
   | { readonly type: 'variable'; readonly name: string; readonly variableName: string };
 
@@ -21,13 +34,51 @@ export interface FloconDeeplink {
 export interface FloconDeeplinkVariable {
   readonly name: string;
   readonly description?: string;
-  readonly suggestions?: readonly string[];
+  readonly suggestions?: readonly FloconDeeplinkSuggestionInput[];
 }
 
-const parameterJson = (p: FloconDeeplinkParameter) =>
-  p.type === 'autoComplete'
-    ? { type: 'auto_complete', name: p.name, autoComplete: p.suggestions }
-    : { type: 'variable', name: p.name, variableName: p.variableName };
+/** Removes the duplicated values (the last declaration of a value wins) and keeps only the first default. */
+export const normalizeDeeplinkSuggestions = (
+  suggestions: readonly FloconDeeplinkSuggestionInput[],
+): FloconDeeplinkSuggestion[] => {
+  const items = suggestions.map((s): FloconDeeplinkSuggestion => (typeof s === 'string' ? { value: s } : s));
+  const lastIndex = new Map<string, number>();
+  items.forEach((s, i) => lastIndex.set(s.value, i));
+  const unique = items.filter((s, i) => lastIndex.get(s.value) === i);
+  const defaultValue = unique.find((s) => s.isDefault)?.value;
+  return unique.map((s) => ({ ...s, isDefault: defaultValue !== undefined && s.value === defaultValue }));
+};
+
+const suggestionJson = (s: FloconDeeplinkSuggestion) => ({
+  value: s.value,
+  ...(s.label != null ? { label: s.label } : {}),
+  ...(s.isDefault ? { isDefault: true } : {}),
+});
+
+/** Whether a suggestion has more than its value, so the desktop needs the detailed list. */
+const hasDetails = (suggestions: readonly FloconDeeplinkSuggestionInput[]) =>
+  suggestions.some((s) => typeof s !== 'string' && (s.label != null || s.isDefault));
+
+const parameterJson = (p: FloconDeeplinkParameter) => {
+  if (p.type === 'variable') return { type: 'variable', name: p.name, variableName: p.variableName };
+  const items = normalizeDeeplinkSuggestions(p.suggestions);
+  // `autoComplete` keeps the values for desktops that do not know `suggestions` yet
+  return {
+    type: 'auto_complete',
+    name: p.name,
+    autoComplete: items.map((s) => s.value),
+    ...(hasDetails(p.suggestions) ? { suggestions: items.map(suggestionJson) } : {}),
+  };
+};
+
+const variableModeJson = (suggestions: readonly FloconDeeplinkSuggestionInput[]) => {
+  const items = normalizeDeeplinkSuggestions(suggestions);
+  return {
+    type: 'auto_complete',
+    suggestions: items.map((s) => s.value),
+    ...(hasDetails(suggestions) ? { items: items.map(suggestionJson) } : {}),
+  };
+};
 
 /** Sends the deeplinks of the app to the Flocon desktop app. */
 export class FloconDeeplinksPlugin implements FloconPlugin {
@@ -47,7 +98,7 @@ export class FloconDeeplinksPlugin implements FloconPlugin {
       })),
       variables: variables.map((v) => ({
         name: v.name,
-        ...(v.suggestions != null ? { mode: { type: 'auto_complete', suggestions: v.suggestions } } : {}),
+        ...(v.suggestions != null ? { mode: variableModeJson(v.suggestions) } : {}),
         ...(v.description != null ? { description: v.description } : {}),
       })),
     });

@@ -41,6 +41,8 @@ export {
   FloconDeeplinksPlugin,
   type FloconDeeplink,
   type FloconDeeplinkParameter,
+  type FloconDeeplinkSuggestion,
+  type FloconDeeplinkSuggestionInput,
   type FloconDeeplinkVariable,
 } from './plugins/deeplinks/deeplinksPlugin';
 export { FloconDashboardPlugin, FloconDashboardHandle } from './plugins/dashboard/dashboardPlugin';
